@@ -11,7 +11,7 @@ const RegistrationFrom = (params) => {
   const [enteredFirstName, setEnteredFirstName] = useState("");
   const [enteredLastName, setEnteredLastName] = useState("");
   const [enteredPhoneNumber, setEnteredPhoneNumber] = useState("");
-  const [isRegistrationComplete, setRegistrationComplete] = useState(false);
+  const [message, setMessage] = useState("");
 
   const isValidFirstName = enteredFirstName.trim().length > 3;
   const isValidLastName = enteredLastName.trim().length > 3;
@@ -24,7 +24,6 @@ const RegistrationFrom = (params) => {
   let errorEmail = "Enter your email address(Required)";
   let errorPassword = "Enter your password(Required)";
   let errorPhoneNumber = "Enter your phone number(Required)";
-  let message = "";
   const onEnteredEmailChange = (e) => {
     setEnteredEmail(e.target.value);
   };
@@ -79,7 +78,7 @@ const RegistrationFrom = (params) => {
         console.log("newUser", JSON.stringify(newUser));
 
         const rawResponse = await fetch(`${BASE_URL}signup`, {
-          method: "post",
+          method: "POST",
           headers: {
             ContentType: "application/json;charset=UTF-8",
           },
@@ -88,22 +87,18 @@ const RegistrationFrom = (params) => {
 
         const response = await rawResponse.json();
         if (response.code === "USR-009") {
-          message = response.message;
-          setRegistrationComplete(true);
+          setMessage(response.message);
 
           return;
         }
 
         console.log(response.message);
-        message = "Registration Successful. Please Login!";
-        setRegistrationComplete(true);
+        setMessage("Registration Successful. Please Login!");
       } else {
-        message = "Registration Failure. Please try Again!";
-        setRegistrationComplete(true);
+        setMessage("Registration Failure. Please try Again!");
       }
     } catch (e) {
-      message = "Registration Failure. Please try again!";
-      setRegistrationComplete(true);
+      setMessage("Registration Failure. Please try again!");
     }
   };
 
@@ -182,7 +177,7 @@ const RegistrationFrom = (params) => {
         helperText={errorPhoneNumber}
         error={!isValidPhoneNumber}
       />
-      {!isRegistrationComplete && <div>{message}</div>}
+      {message ? <div>{message}</div> : ""}
       <Button variant="contained" color="primary" id="register" type="submit">
         REGISTER
       </Button>
